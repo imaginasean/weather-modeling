@@ -146,7 +146,8 @@ export default function MapView({
             position={[lat, lon]}
             icon={icon}
             eventHandlers={{
-              click: () => {
+              click: (e: L.LeafletMouseEvent) => {
+                L.DomEvent.stopPropagation(e.originalEvent);
                 setSelectedStationId(id);
                 fetchPoints(lat, lon)
                   .then((data) => setPointData(pointsToPointData(data)))

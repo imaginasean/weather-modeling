@@ -26,14 +26,15 @@ Open [http://localhost:5173](http://localhost:5173). The frontend proxies `/api`
 
 ### Usage
 
-1. **Click the map** to select a location. The app fetches NWS grid data and shows forecast periods and hourly temperature/precip.
-2. **Click a station marker** (after selecting a location) to see the latest **observation** (temperature, dew point, wind chill, etc.).
-3. Use **Glossary** in the header to see all term definitions. **Info (ℹ️) tooltips** next to terms explain forecast, observation, dew point, wind chill, heat index, precipitation chance, and watch vs warning.
+1. **Click the map** to select a location. The app fetches NWS grid data and shows forecast periods, hourly temperature/precip, **raw gridpoint (model)** data, and alerts.
+2. **Click a station marker** to see the latest **observation** and to enable **bias-corrected** values (raw + observation − raw).
+3. Use **Raw** / **Corrected** in the gridpoint section to compare model vs bias-corrected temperature and dew point.
+4. Use **Glossary** and **Info (ℹ️) tooltips** for term definitions (e.g. NDFD, bias correction).
 
 ## Project layout
 
-- `backend/` — FastAPI app: NWS client, cache, `/api/points`, `/api/forecast`, `/api/forecast/hourly`, `/api/stations/...`, `/api/alerts/active`, `/api/glossary`.
-- `frontend/` — Vite + React + TypeScript: Leaflet map, dashboard (forecast + hourly chart, observation, alerts), tooltip component, glossary panel.
+- `backend/` — FastAPI app: NWS client, cache, `/api/points`, `/api/forecast`, `/api/forecast/hourly`, `/api/gridpoints/{gridId}/{gridX}/{gridY}`, `/api/stations/...`, `/api/alerts/active`, `/api/glossary`.
+- `frontend/` — Vite + React + TypeScript: Leaflet map, dashboard (forecast, hourly chart, **raw gridpoint**, **Raw vs Corrected** toggle, observation, alerts), tooltip component, glossary panel.
 
 ## Plan
 

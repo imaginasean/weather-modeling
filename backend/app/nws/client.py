@@ -40,6 +40,10 @@ class NWSClient:
         """Get grid metadata and forecast/observation station URLs for a lat/lon."""
         return await self._get(f"/points/{lat:.4f},{lon:.4f}")
 
+    async def gridpoint(self, grid_id: str, grid_x: int, grid_y: int) -> dict:
+        """Get raw gridded model/NDFD data for a grid cell (Phase 2 raw data)."""
+        return await self._get(f"/gridpoints/{grid_id}/{grid_x},{grid_y}")
+
     # --- Forecast ---
     async def forecast(self, forecast_url: str) -> dict:
         """Get zone forecast from points response."""

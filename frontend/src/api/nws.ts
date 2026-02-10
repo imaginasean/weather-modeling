@@ -58,6 +58,24 @@ export async function fetchAlertsByZone(zoneId: string): Promise<AlertsResponse>
   return r.json();
 }
 
+/** Fetch raw gridpoint (model/NDFD) data for a grid cell. Phase 2 raw data source. */
+export async function fetchGridpoint(
+  gridId: string,
+  gridX: number,
+  gridY: number
+): Promise<GridpointResponse> {
+  const r = await fetch(
+    `${API_BASE}/gridpoints/${encodeURIComponent(gridId)}/${gridX}/${gridY}`
+  );
+  if (!r.ok) throw new Error("Failed to fetch gridpoint");
+  return r.json();
+}
+
+/** Convert Celsius to Fahrenheit (gridpoint values are in C). */
+export function celsiusToF(c: number): number {
+  return Math.round((c * (9 / 5) + 32) * 10) / 10;
+}
+
 // --- NWS response types (minimal) ---
 export interface PointsResponse {
   properties: {
@@ -157,4 +175,15 @@ export interface AlertsResponse {
       description: string;
     };
   }>;
+}
+
+/** NWS gridpoint: raw model/NDFD values by valid time. Values in Celsius. */
+export interface GridpointResponse {
+  properties: {
+    temperature?: { values: Array<{ validTime: string; value: number | null }> };
+    dewpoint?: { values: Array<{ validTime: string; value: number | null }> };
+    maxTemperature?: { values: Array<{ validTime: string; value: number | null }> };
+    minTemperature?: { values: Array<{ validTime: string; value: number | null }> };
+    [key: string]: unknown;
+  };
 }

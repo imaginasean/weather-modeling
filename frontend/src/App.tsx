@@ -24,7 +24,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Weather Modeling</h1>
-        <p className="tagline">Real NWS data · Phase 1</p>
+        <p className="tagline">Real NWS data · Phase 2 (raw vs bias-corrected)</p>
         <button
           type="button"
           className="glossary-btn"

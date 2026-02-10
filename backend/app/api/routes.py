@@ -78,6 +78,17 @@ async def stations_observations(url: str):
         raise HTTPException(status_code=502, detail=str(e))
 
 
+# --- NWS: gridpoint (raw gridded data for Phase 2) ---
+@router.get("/gridpoints/{grid_id}/{grid_x}/{grid_y}")
+async def gridpoint(grid_id: str, grid_x: int, grid_y: int):
+    """Get raw gridpoint (model/NDFD) data for a grid cell. Used for raw vs corrected comparison."""
+    try:
+        data = await nws.gridpoint(grid_id, grid_x, grid_y)
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
+
+
 # --- NWS: alerts ---
 @router.get("/alerts/active")
 async def alerts_active(zone: str | None = None, area: str | None = None):

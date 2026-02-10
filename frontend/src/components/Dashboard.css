@@ -4,6 +4,15 @@
   gap: 1.25rem;
 }
 
+.dashboard-error {
+  padding: 0.5rem 0.75rem;
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 6px;
+  color: #c53030;
+  font-size: 0.9rem;
+}
+
 .dashboard-title {
   font-size: 1.1rem;
   margin: 0 0 0.25rem 0;
@@ -70,6 +79,59 @@
 .chart-block h3 {
   font-size: 0.95rem;
   margin: 0 0 0.5rem 0;
+}
+
+.gridpoint-block {
+  margin-top: 0.5rem;
+}
+
+.gridpoint-block .dashboard-title {
+  margin-bottom: 0.35rem;
+}
+
+.gridpoint-card {
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e2e6ea;
+}
+
+.gridpoint-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.5rem 0;
+}
+
+.gridpoint-card.corrected {
+  background: #f0f7f0;
+  border-color: #b8d4b8;
+}
+
+.raw-corrected-toggle {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.raw-corrected-toggle button {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.raw-corrected-toggle button.active {
+  background: #0f3460;
+  color: #fff;
+  border-color: #0f3460;
+}
+
+.bias-note {
+  font-size: 0.8rem;
+  color: #555;
+  margin-left: 0.25rem;
 }
 
 .observation-card {

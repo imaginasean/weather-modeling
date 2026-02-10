@@ -9,9 +9,9 @@ import {
   CartesianGrid,
 } from "recharts";
 import InfoTooltip from "./InfoTooltip";
-import { fetchForecast, fetchForecastHourly, fetchLatestObservation, fetchAlertsByZone, observationTempToF } from "../api/nws";
+import { fetchForecast, fetchForecastHourly, fetchLatestObservation, fetchAlertsByZone, fetchGridpoint, observationTempToF, celsiusToF } from "../api/nws";
 import type { PointData } from "../App";
-import type { ForecastResponse, ForecastHourlyResponse, ObservationResponse, AlertsResponse } from "../api/nws";
+import type { ForecastResponse, ForecastHourlyResponse, ObservationResponse, AlertsResponse, GridpointResponse } from "../api/nws";
 import { fetchGlossary } from "../api/glossary";
 import type { GlossaryEntry } from "../api/glossary";
 import "./Dashboard.css";
@@ -26,7 +26,11 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
   const [hourly, setHourly] = useState<ForecastHourlyResponse | null>(null);
   const [observation, setObservation] = useState<ObservationResponse | null>(null);
   const [alerts, setAlerts] = useState<AlertsResponse["features"]>([]);
+  const [gridpoint, setGridpoint] = useState<GridpointResponse | null>(null);
+  const [showCorrected, setShowCorrected] = useState<"raw" | "corrected">("raw");
   const [glossary, setGlossary] = useState<Record<string, GlossaryEntry>>({});
+  const [loading, setLoading] = useState({ forecast: false, gridpoint: false });
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGlossary().then((res) => {
@@ -42,8 +46,12 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
     if (!pointData?.forecastUrl) {
       setForecast(null);
       setHourly(null);
+      setLoading((l) => ({ ...l, forecast: false }));
+      setError(null);
       return;
     }
+    setError(null);
+    setLoading((l) => ({ ...l, forecast: true }));
     let cancelled = false;
     Promise.all([
       fetchForecast(pointData.forecastUrl),
@@ -52,9 +60,15 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
       if (!cancelled) {
         setForecast(f);
         setHourly(h);
+        setLoading((l) => ({ ...l, forecast: false }));
       }
     }).catch(() => {
-      if (!cancelled) setForecast(null), setHourly(null);
+      if (!cancelled) {
+        setForecast(null);
+        setHourly(null);
+        setLoading((l) => ({ ...l, forecast: false }));
+        setError("Could not load forecast. Try again or pick another location.");
+      }
     });
     return () => { cancelled = true; };
   }, [pointData?.forecastUrl, pointData?.forecastHourlyUrl]);
@@ -87,6 +101,30 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
     return () => { cancelled = true; };
   }, [pointData?.forecastZoneId]);
 
+  useEffect(() => {
+    if (!pointData) {
+      setGridpoint(null);
+      setLoading((l) => ({ ...l, gridpoint: false }));
+      return;
+    }
+    setLoading((l) => ({ ...l, gridpoint: true }));
+    let cancelled = false;
+    fetchGridpoint(pointData.gridId, pointData.gridX, pointData.gridY)
+      .then((g) => {
+        if (!cancelled) {
+          setGridpoint(g);
+          setLoading((l) => ({ ...l, gridpoint: false }));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGridpoint(null);
+          setLoading((l) => ({ ...l, gridpoint: false }));
+        }
+      });
+    return () => { cancelled = true; };
+  }, [pointData?.gridId, pointData?.gridX, pointData?.gridY]);
+
   const def = (term: string) => glossary[term.toLowerCase()];
   const periods = forecast?.properties?.periods ?? [];
   const hourlyPeriods = hourly?.properties?.periods ?? [];
@@ -98,6 +136,11 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
 
   return (
     <div className="dashboard">
+      {error && (
+        <div className="dashboard-error" role="alert">
+          {error}
+        </div>
+      )}
       <h2 className="dashboard-title">
         Forecast
         <InfoTooltip
@@ -107,6 +150,8 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
       </h2>
       {!pointData ? (
         <p className="dashboard-placeholder">Click the map to select a location.</p>
+      ) : loading.forecast ? (
+        <p className="dashboard-placeholder">Loading forecast…</p>
       ) : (
         <>
           <div className="forecast-periods">
@@ -147,6 +192,86 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
                   <Line yAxisId="pop" type="monotone" dataKey="pop" stroke="#e94560" name="Precip %" dot={false} />
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+          )}
+          {pointData && (
+            <div className="gridpoint-block">
+              {loading.gridpoint ? (
+                <p className="dashboard-placeholder">Loading gridpoint data…</p>
+              ) : gridpoint?.properties ? (
+              <>
+              <h3 className="dashboard-title">
+                {showCorrected === "corrected" ? "Bias-corrected" : "Raw gridpoint (model)"}
+                {showCorrected === "raw" ? (
+                  <InfoTooltip term="NDFD" definition={def("NDFD")?.definition ?? "Loading…"} />
+                ) : (
+                  <InfoTooltip term="bias correction" definition={def("bias correction")?.definition ?? "Loading…"} />
+                )}
+              </h3>
+              <div className="raw-corrected-toggle">
+                <button
+                  type="button"
+                  className={showCorrected === "raw" ? "active" : ""}
+                  onClick={() => setShowCorrected("raw")}
+                >
+                  Raw
+                </button>
+                <button
+                  type="button"
+                  className={showCorrected === "corrected" ? "active" : ""}
+                  onClick={() => setShowCorrected("corrected")}
+                >
+                  Corrected
+                </button>
+              </div>
+              <div className={`gridpoint-card ${showCorrected === "corrected" ? "corrected" : ""}`}>
+                {showCorrected === "raw" ? (
+                  <>
+                    <p className="gridpoint-desc">Unadjusted model/NDFD values for this grid cell.</p>
+                    {gridpoint.properties.temperature?.values?.[0]?.value != null && (
+                      <div className="obs-row">Temperature: {celsiusToF(gridpoint.properties.temperature.values[0].value)}°F</div>
+                    )}
+                    {gridpoint.properties.dewpoint?.values?.[0]?.value != null && (
+                      <div className="obs-row">Dew point: {celsiusToF(gridpoint.properties.dewpoint.values[0].value)}°F</div>
+                    )}
+                  </>
+                ) : (
+                  (() => {
+                    const rawTemp = gridpoint.properties.temperature?.values?.[0]?.value;
+                    const rawDew = gridpoint.properties.dewpoint?.values?.[0]?.value;
+                    const obsTemp = observation?.properties?.temperature?.value != null
+                      ? observationTempToF(observation.properties.temperature.value, observation.properties.temperature.unitCode)
+                      : null;
+                    const obsDew = observation?.properties?.dewpoint?.value != null
+                      ? observationTempToF(observation.properties.dewpoint.value, observation.properties.dewpoint.unitCode)
+                      : null;
+                    const rawTempF = rawTemp != null ? celsiusToF(rawTemp) : null;
+                    const rawDewF = rawDew != null ? celsiusToF(rawDew) : null;
+                    const biasTemp = (obsTemp != null && rawTempF != null) ? obsTemp - rawTempF : null;
+                    const biasDew = (obsDew != null && rawDewF != null) ? obsDew - rawDewF : null;
+                    const correctedTemp = (rawTempF != null && biasTemp != null) ? Math.round((rawTempF + biasTemp) * 10) / 10 : rawTempF;
+                    const correctedDew = (rawDewF != null && biasDew != null) ? Math.round((rawDewF + biasDew) * 10) / 10 : rawDewF;
+                    if (!selectedStationId) {
+                      return <p className="gridpoint-desc">Select a station on the map to see bias-corrected values (observation − raw).</p>;
+                    }
+                    return (
+                      <>
+                        <p className="gridpoint-desc">Corrected = raw + (observation − raw) using station {selectedStationId}.</p>
+                        {correctedTemp != null && (
+                          <div className="obs-row">Temperature: {correctedTemp}°F{biasTemp != null && <span className="bias-note"> (bias {biasTemp >= 0 ? "+" : ""}{biasTemp.toFixed(1)}°F)</span>}</div>
+                        )}
+                        {correctedDew != null && (
+                          <div className="obs-row">Dew point: {correctedDew}°F{biasDew != null && <span className="bias-note"> (bias {biasDew >= 0 ? "+" : ""}{biasDew.toFixed(1)}°F)</span>}</div>
+                        )}
+                      </>
+                    );
+                  })()
+                )}
+              </div>
+              </>
+              ) : (
+                <p className="dashboard-placeholder">Gridpoint data not available for this location.</p>
+              )}
             </div>
           )}
         </>
