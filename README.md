@@ -39,4 +39,4 @@ Open [http://localhost:5173](http://localhost:5173). The frontend proxies `/api`
 
 ## Plan
 
-See the phased plan for Phase 4 (full NWP-style modeling) and beyond.
+See [docs/PLAN.md](docs/PLAN.md) for the phased plan. **Phase 4** is the forecast time-lapse (visual wind/temperature/precipitation over time from this data); Phase 5+ covers NWP-style modeling and polish.
