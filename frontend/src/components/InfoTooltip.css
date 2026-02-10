@@ -1,0 +1,70 @@
+.info-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 0.2em;
+}
+
+.info-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25em;
+  height: 1.25em;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: help;
+  font-size: 0.95em;
+  border-radius: 50%;
+}
+
+.info-tooltip-trigger:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.info-tooltip-popover {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin-bottom: 6px;
+  padding: 0.6rem 0.75rem;
+  min-width: 200px;
+  max-width: 320px;
+  background: #1a1a2e;
+  color: #eee;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.info-tooltip-popover strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #fff;
+}
+
+.info-tooltip-popover p {
+  margin: 0 0 0.4rem 0;
+  opacity: 0.95;
+}
+
+.info-tooltip-learn {
+  color: #7eb8da;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.info-tooltip-learn:hover {
+  text-decoration: underline;
+}
+
+/* When popover would go off top, show below */
+.info-tooltip-wrap:has(.info-tooltip-popover) .info-tooltip-popover {
+  bottom: auto;
+  top: 100%;
+  margin-top: 6px;
+  margin-bottom: 0;
+}

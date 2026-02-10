@@ -1,0 +1,77 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  padding: 0.75rem 1.5rem;
+  background: #1a1a2e;
+  color: #eee;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.glossary-btn {
+  margin-left: auto;
+  padding: 0.4rem 0.8rem;
+  background: #16213e;
+  color: #eee;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.glossary-btn:hover {
+  background: #0f3460;
+}
+
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  grid-template-rows: 1fr;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: 300px 1fr;
+  }
+}
+
+.map-section {
+  height: 100%;
+  min-height: 0; /* let grid size the row so map gets correct height */
+  background: #e2e6ea;
+}
+
+.dashboard-section {
+  overflow: auto;
+  padding: 1rem;
+  background: #fff;
+  border-left: 1px solid #ddd;
+}
+
+@media (max-width: 900px) {
+  .dashboard-section {
+    border-left: none;
+    border-top: 1px solid #ddd;
+  }
+}
