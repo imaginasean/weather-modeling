@@ -12,6 +12,8 @@ import InfoTooltip from "./InfoTooltip";
 import LocationStatus from "./LocationStatus";
 import Advection1D from "./Advection1D";
 import Advection2D from "./Advection2D";
+import ForecastTimelapse from "./ForecastTimelapse";
+import DualForecastTimelapse from "./DualForecastTimelapse";
 import Sounding from "./Sounding";
 import { fetchForecast, fetchForecastHourly, fetchLatestObservation, fetchAlertsByZone, fetchGridpoint, observationTempToF, celsiusToF, observationWindSpeedMps, windDirectionToCompass } from "../api/nws";
 import type { PointData } from "../App";
@@ -222,6 +224,17 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
               </ResponsiveContainer>
             </div>
           )}
+          <ForecastTimelapse
+            hourly={hourly}
+            gridpoint={gridpoint}
+            loading={loading.forecast}
+          />
+          <DualForecastTimelapse
+            hourly={hourly}
+            gridpoint={gridpoint}
+            observation={observation}
+            loading={loading.forecast}
+          />
           {pointData && (
             <div className="gridpoint-block">
               {loading.gridpoint ? (

@@ -1,0 +1,164 @@
+.dual-timelapse-block {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.dual-timelapse-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  color: #0f3460;
+}
+
+.dual-timelapse-desc {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.dual-timelapse-placeholder {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.dual-timelapse-controls-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dual-timelapse-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.dual-timelapse-select {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.dual-timelapse-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+  .dual-timelapse-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dual-timelapse-panel {
+  padding: 1rem;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.dual-timelapse-panel-raw {
+  border-left: 3px solid #6c757d;
+}
+
+.dual-timelapse-panel-alt {
+  border-left: 3px solid #0f3460;
+}
+
+.dual-timelapse-panel-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.75rem;
+}
+
+.dual-timelapse-frame-inner {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dual-timelapse-time {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.dual-timelapse-temp {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f3460;
+}
+
+.dual-timelapse-wind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.dual-timelapse-wind-arrow {
+  display: inline-block;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.dual-timelapse-pop {
+  font-size: 0.9rem;
+  color: #e94560;
+}
+
+.dual-timelapse-range {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: normal;
+}
+
+.dual-timelapse-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dual-timelapse-play {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background: #0f3460;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.dual-timelapse-play:hover {
+  background: #1a4a7a;
+}
+
+.dual-timelapse-slider {
+  flex: 1;
+  min-width: 120px;
+  max-width: 320px;
+  height: 8px;
+  accent-color: #0f3460;
+}
+
+.dual-timelapse-step-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+}

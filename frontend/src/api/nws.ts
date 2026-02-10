@@ -204,3 +204,19 @@ export function windDirectionToCompass(degrees: number): string {
   const index = Math.round(((degrees % 360) + 360) % 360 / 22.5) % 16;
   return COMPASS_16[index];
 }
+
+/** Parse NWS gridpoint validTime (e.g. "2024-01-15T18:00:00+00:00/PT1H") to start time string for comparison. */
+export function gridpointValidTimeStart(validTime: string): string {
+  const i = validTime.indexOf("/");
+  return i >= 0 ? validTime.slice(0, i) : validTime;
+}
+
+/** Compass label to degrees (meteorological “from”). Handles "N", "NE", "NNE", etc. */
+const COMPASS_TO_DEG: Record<string, number> = Object.fromEntries(
+  COMPASS_16.map((label, i) => [label, i * 22.5])
+);
+export function compassToDegrees(compass: string): number | null {
+  const upper = compass?.trim().toUpperCase();
+  if (upper == null || upper === "") return null;
+  return COMPASS_TO_DEG[upper] ?? null;
+}

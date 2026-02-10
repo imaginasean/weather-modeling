@@ -15,10 +15,20 @@ export default function Sounding({ glossary, lat, lon }: Props) {
   useEffect(() => {
     setLoading(true);
     setError(null);
+    let cancelled = false;
     fetchSounding(lat, lon)
-      .then(setData)
-      .catch(() => setError("Could not load sounding."))
-      .finally(() => setLoading(false));
+      .then((result) => {
+        if (!cancelled) setData(result);
+      })
+      .catch(() => {
+        if (!cancelled) setError("Could not load sounding.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [lat, lon]);
 
   const def = (term: string) => glossary[term.toLowerCase()];
