@@ -1,0 +1,9 @@
+# Virtual env and Python bytecode
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Local env (e.g. API keys – use env vars instead)
+.env
+.env.local
