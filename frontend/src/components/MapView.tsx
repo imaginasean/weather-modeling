@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { MapContainer, TileLayer, useMapEvents, useMap, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, useMap, Marker, Popup, CircleMarker } from "react-leaflet";
 import L from "leaflet";
 import { fetchPoints } from "../api/nws";
 import { fetchStations } from "../api/nws";
@@ -84,7 +84,7 @@ function MapClickHandler({
       setSelectedStationId(null);
       try {
         const data = await fetchPoints(lat, lng);
-        setPointData(pointsToPointData(data));
+        setPointData({ ...pointsToPointData(data), lat, lon: lng });
       } catch {
         setPointData(null);
       }
@@ -134,6 +134,20 @@ export default function MapView({
         setPointData={setPointData}
         setSelectedStationId={setSelectedStationId}
       />
+      {pointData?.lat != null && pointData?.lon != null && (
+        <CircleMarker
+          center={[pointData.lat, pointData.lon]}
+          radius={8}
+          pathOptions={{ color: "#0f3460", fillColor: "#0f3460", fillOpacity: 0.7, weight: 2 }}
+          eventHandlers={{ click: (e) => L.DomEvent.stopPropagation(e.originalEvent) }}
+        >
+          <Popup>
+            <strong>Selected location</strong>
+            <br />
+            Forecast, gridpoint, sounding use this point.
+          </Popup>
+        </CircleMarker>
+      )}
       {stations.map((f) => {
         const coords = f.geometry?.coordinates;
         const id = f.properties?.stationIdentifier;
@@ -150,7 +164,7 @@ export default function MapView({
                 L.DomEvent.stopPropagation(e.originalEvent);
                 setSelectedStationId(id);
                 fetchPoints(lat, lon)
-                  .then((data) => setPointData(pointsToPointData(data)))
+                  .then((data) => setPointData({ ...pointsToPointData(data), lat, lon }))
                   .catch(() => setPointData(null));
               },
             }}

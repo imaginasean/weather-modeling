@@ -5,6 +5,9 @@ from fastapi import APIRouter, HTTPException
 
 from app.glossary_data import GLOSSARY, get_glossary_by_category, get_term
 from app.nws.client import nws
+from app.physics.advection_1d import solve_1d_advection
+from app.physics.advection_2d import solve_2d_advection_diffusion
+from app.physics.sounding import get_sounding
 
 router = APIRouter()
 
@@ -87,6 +90,58 @@ async def gridpoint(grid_id: str, grid_x: int, grid_y: int):
         return data
     except Exception as e:
         raise HTTPException(status_code=502, detail=str(e))
+
+
+# --- Physics (Phase 3) ---
+@router.get("/physics/advection-1d")
+async def physics_advection_1d(
+    nx: int = 100,
+    c: float = 1.0,
+    num_steps: int = 50,
+    output_interval: int = 10,
+):
+    """Run 1D advection u_t + c u_x = 0; returns x and u(x) at time steps for viz."""
+    if nx < 10 or nx > 500:
+        raise HTTPException(status_code=400, detail="nx must be between 10 and 500")
+    if num_steps < 1 or num_steps > 500:
+        raise HTTPException(status_code=400, detail="num_steps must be between 1 and 500")
+    try:
+        return solve_1d_advection(nx=nx, c=c, num_steps=num_steps, output_interval=output_interval)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/physics/advection-2d")
+async def physics_advection_2d(
+    nx: int = 40,
+    ny: int = 30,
+    cx: float = 0.5,
+    cy: float = 0.0,
+    diffusion: float = 0.001,
+    num_steps: int = 30,
+    output_interval: int = 10,
+):
+    """Run 2D advection-diffusion; returns 2D field at time steps for viz."""
+    if nx < 5 or nx > 80 or ny < 5 or ny > 80:
+        raise HTTPException(status_code=400, detail="nx, ny must be between 5 and 80")
+    if num_steps < 1 or num_steps > 200:
+        raise HTTPException(status_code=400, detail="num_steps must be between 1 and 200")
+    try:
+        return solve_2d_advection_diffusion(
+            nx=nx, ny=ny, cx=cx, cy=cy, diffusion=diffusion,
+            num_steps=num_steps, output_interval=output_interval,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/physics/sounding")
+async def physics_sounding(lat: float | None = None, lon: float | None = None):
+    """Return sounding with CAPE, CIN, profile. If lat/lon provided, fetch real Wyoming sounding for nearest station."""
+    try:
+        return get_sounding(lat, lon)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # --- NWS: alerts ---

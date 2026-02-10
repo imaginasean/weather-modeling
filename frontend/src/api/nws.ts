@@ -177,13 +177,30 @@ export interface AlertsResponse {
   }>;
 }
 
-/** NWS gridpoint: raw model/NDFD values by valid time. Values in Celsius. */
+/** NWS gridpoint: raw model/NDFD values by valid time. Values in Celsius; wind in km/h. */
 export interface GridpointResponse {
   properties: {
     temperature?: { values: Array<{ validTime: string; value: number | null }> };
     dewpoint?: { values: Array<{ validTime: string; value: number | null }> };
+    windSpeed?: { values: Array<{ validTime: string; value: number | null }> };
+    windDirection?: { values: Array<{ validTime: string; value: number | null }> };
     maxTemperature?: { values: Array<{ validTime: string; value: number | null }> };
     minTemperature?: { values: Array<{ validTime: string; value: number | null }> };
     [key: string]: unknown;
   };
+}
+
+/** Convert observation wind speed to m/s (NWS uses m/s or km/h per unitCode). */
+export function observationWindSpeedMps(value: number | null | undefined, unitCode: string | undefined): number | null {
+  if (value == null) return null;
+  if (unitCode?.includes("km") || unitCode?.toLowerCase().includes("km_h")) return value / 3.6;
+  return value; // assume m/s
+}
+
+const COMPASS_16 = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"] as const;
+
+/** Convert wind direction in degrees (0–360, meteorological “from”) to a 16-point compass label. */
+export function windDirectionToCompass(degrees: number): string {
+  const index = Math.round(((degrees % 360) + 360) % 360 / 22.5) % 16;
+  return COMPASS_16[index];
 }

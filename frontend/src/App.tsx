@@ -13,6 +13,9 @@ export type PointData = {
   observationStationsUrl: string;
   /** NWS forecast zone ID (e.g. FLZ048) for alerts */
   forecastZoneId?: string;
+  /** Clicked location for soundings */
+  lat?: number;
+  lon?: number;
 } | null;
 
 function App() {
@@ -24,7 +27,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Weather Modeling</h1>
-        <p className="tagline">Real NWS data · Phase 2 (raw vs bias-corrected)</p>
+        <p className="tagline">Real NWS data · Phase 3 (simple physics)</p>
         <button
           type="button"
           className="glossary-btn"

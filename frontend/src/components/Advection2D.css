@@ -1,0 +1,57 @@
+.advection2d-block {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e6ea;
+}
+
+.advection2d-title {
+  font-size: 1rem;
+  margin: 0 0 0.35rem 0;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2em;
+}
+
+.advection2d-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.5rem 0;
+}
+
+.advection2d-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.advection2d-step input[type="range"] {
+  width: 120px;
+}
+
+.advection2d-heatmap {
+  display: grid;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 4/3;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.advection2d-cell {
+  min-width: 2px;
+  min-height: 2px;
+}
+
+.advection2d-placeholder,
+.advection2d-error {
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0 0;
+}
+
+.advection2d-error {
+  color: #c53030;
+}

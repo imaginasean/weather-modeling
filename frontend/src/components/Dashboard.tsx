@@ -9,7 +9,11 @@ import {
   CartesianGrid,
 } from "recharts";
 import InfoTooltip from "./InfoTooltip";
-import { fetchForecast, fetchForecastHourly, fetchLatestObservation, fetchAlertsByZone, fetchGridpoint, observationTempToF, celsiusToF } from "../api/nws";
+import LocationStatus from "./LocationStatus";
+import Advection1D from "./Advection1D";
+import Advection2D from "./Advection2D";
+import Sounding from "./Sounding";
+import { fetchForecast, fetchForecastHourly, fetchLatestObservation, fetchAlertsByZone, fetchGridpoint, observationTempToF, celsiusToF, observationWindSpeedMps, windDirectionToCompass } from "../api/nws";
 import type { PointData } from "../App";
 import type { ForecastResponse, ForecastHourlyResponse, ObservationResponse, AlertsResponse, GridpointResponse } from "../api/nws";
 import { fetchGlossary } from "../api/glossary";
@@ -126,6 +130,24 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
   }, [pointData?.gridId, pointData?.gridX, pointData?.gridY]);
 
   const def = (term: string) => glossary[term.toLowerCase()];
+
+  const windResult: { wind: { speedMps: number; directionDeg: number } | null; windSource: "observation" | "gridpoint" | null } = (() => {
+    if (observation?.properties?.windSpeed?.value != null && observation?.properties?.windDirection?.value != null) {
+      const speed = observationWindSpeedMps(observation.properties.windSpeed.value, observation.properties.windSpeed.unitCode);
+      if (speed != null) return { wind: { speedMps: speed, directionDeg: observation.properties.windDirection.value }, windSource: "observation" as const };
+    }
+    const gp = gridpoint?.properties;
+    const ws = gp?.windSpeed?.values?.[0]?.value;
+    const wd = gp?.windDirection?.values?.[0]?.value;
+    if (ws != null && wd != null) {
+      const speedMps = typeof ws === "number" ? (ws > 20 ? ws / 3.6 : ws) : 2.5;
+      return { wind: { speedMps, directionDeg: wd }, windSource: "gridpoint" as const };
+    }
+    return { wind: null, windSource: null };
+  })();
+  const wind = windResult.wind;
+  const windSource = windResult.windSource;
+
   const periods = forecast?.properties?.periods ?? [];
   const hourlyPeriods = hourly?.properties?.periods ?? [];
   const chartData = hourlyPeriods.slice(0, 48).map((p) => ({
@@ -136,6 +158,12 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
 
   return (
     <div className="dashboard">
+      <LocationStatus
+        pointData={pointData}
+        selectedStationId={selectedStationId}
+        wind={wind}
+        windSource={windSource}
+      />
       {error && (
         <div className="dashboard-error" role="alert">
           {error}
@@ -301,6 +329,20 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
                   </span>
                 </div>
               )}
+              {(observation.properties.windSpeed?.value != null || observation.properties.windDirection?.value != null) && (
+                <div className="obs-row">
+                  <span className="term-with-tip">
+                    Wind:{" "}
+                    {observation.properties.windSpeed?.value != null
+                      ? `${observationWindSpeedMps(observation.properties.windSpeed.value, observation.properties.windSpeed.unitCode)?.toFixed(1) ?? "—"} m/s`
+                      : ""}
+                    {observation.properties.windSpeed?.value != null && observation.properties.windDirection?.value != null ? " from " : ""}
+                    {observation.properties.windDirection?.value != null
+                      ? `${windDirectionToCompass(observation.properties.windDirection.value)} (${Math.round(observation.properties.windDirection.value)}°)`
+                      : ""}
+                  </span>
+                </div>
+              )}
               {(observation.properties.windChill?.value != null || observation.properties.heatIndex?.value != null) && (
                 <div className="obs-row">
                   {observation.properties.windChill?.value != null && (
@@ -347,6 +389,10 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
           ))
         )}
       </div>
+
+      <Advection1D glossary={glossary} wind={wind} />
+      <Advection2D glossary={glossary} wind={wind} />
+      <Sounding glossary={glossary} lat={pointData?.lat} lon={pointData?.lon} />
     </div>
   );
 }

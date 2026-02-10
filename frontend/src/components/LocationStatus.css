@@ -1,0 +1,68 @@
+.location-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem 0.75rem;
+  background: #f5f6f8;
+  border: 1px solid #e2e6ea;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.location-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.location-status-label {
+  font-weight: 600;
+  color: #555;
+  min-width: 4.5rem;
+}
+
+.location-status-value {
+  color: #1a1a2e;
+}
+
+.station-badge {
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  background: #0f3460;
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.wind-badge {
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.wind-observation {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #a5d6a7;
+}
+
+.wind-gridpoint {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #90caf9;
+}
+
+.wind-demo {
+  background: #f5f5f5;
+  color: #616161;
+  border: 1px solid #e0e0e0;
+}
+
+.location-status-note {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.35;
+}

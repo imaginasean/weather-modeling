@@ -1,6 +1,6 @@
 # Weather Modeling
 
-Weather forecasting application using real NWS data. Phase 1: ingest, visualize, and educate.
+Weather forecasting application using real NWS data. Phases 1–3: ingest, visualize, raw vs bias-corrected, and simple physics (advection, sounding).
 
 ## Quick start
 
@@ -29,13 +29,14 @@ Open [http://localhost:5173](http://localhost:5173). The frontend proxies `/api`
 1. **Click the map** to select a location. The app fetches NWS grid data and shows forecast periods, hourly temperature/precip, **raw gridpoint (model)** data, and alerts.
 2. **Click a station marker** to see the latest **observation** and to enable **bias-corrected** values (raw + observation − raw).
 3. Use **Raw** / **Corrected** in the gridpoint section to compare model vs bias-corrected temperature and dew point.
-4. Use **Glossary** and **Info (ℹ️) tooltips** for term definitions (e.g. NDFD, bias correction).
+4. Use **Glossary** and **Info (ℹ️) tooltips** for term definitions.
+5. **Phase 3:** Scroll to **1D advection**, **2D advection–diffusion**, and **Sounding (demo)** for CAPE/CIN and T vs pressure.
 
 ## Project layout
 
-- `backend/` — FastAPI app: NWS client, cache, `/api/points`, `/api/forecast`, `/api/forecast/hourly`, `/api/gridpoints/{gridId}/{gridX}/{gridY}`, `/api/stations/...`, `/api/alerts/active`, `/api/glossary`.
-- `frontend/` — Vite + React + TypeScript: Leaflet map, dashboard (forecast, hourly chart, **raw gridpoint**, **Raw vs Corrected** toggle, observation, alerts), tooltip component, glossary panel.
+- `backend/` — FastAPI: NWS client, cache, gridpoints, **physics** (`/api/physics/advection-1d`, `advection-2d`, `sounding`), glossary.
+- `frontend/` — Vite + React + TypeScript: map, dashboard (forecast, gridpoint raw/corrected, observation, alerts, **1D/2D advection demos**, **sounding**), tooltips, glossary.
 
 ## Plan
 
-See the phased plan for Phase 2 (post-processing), Phase 3 (simple physics), and Phase 4 (full NWP-style modeling).
+See the phased plan for Phase 4 (full NWP-style modeling) and beyond.

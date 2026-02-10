@@ -1,0 +1,52 @@
+.sounding-block {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e6ea;
+}
+
+.sounding-title {
+  font-size: 1rem;
+  margin: 0 0 0.35rem 0;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2em;
+}
+
+.sounding-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.35rem 0;
+}
+
+.sounding-indices {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.sounding-indices .term-with-tip {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sounding-chart {
+  margin-top: 0.25rem;
+}
+
+.sounding-note {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 0.25rem 0 0 0;
+}
+
+.sounding-placeholder,
+.sounding-error {
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0 0;
+}
+
+.sounding-error {
+  color: #c53030;
+}

@@ -1,0 +1,28 @@
+.advection1d-block {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e6ea;
+}
+
+.advection1d-title {
+  font-size: 1rem;
+  margin: 0 0 0.35rem 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.advection1d-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.5rem 0;
+}
+
+.advection-placeholder,
+.advection-error {
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0 0;
+}
+
+.advection-error {
+  color: #c53030;
+}
