@@ -1,17 +1,39 @@
 """
 Sounding: return profile and CAPE/CIN for display (Phase 3).
-Uses real Wyoming sounding when lat/lon provided; otherwise demo.
+Sources: wyoming (observed), rap/hrrr (model), or demo when no lat/lon.
 """
 from __future__ import annotations
 
 from typing import Any
 
+from app.nws.cache import model_sounding_cache
+from app.physics.model_sounding import _run_time_utc, get_model_sounding
 from app.physics.uwyo_sounding import get_real_sounding
 
 
-def get_sounding(lat: float | None = None, lon: float | None = None) -> dict[str, Any]:
-    """Return real sounding for (lat, lon) if provided and available; otherwise demo."""
+def get_sounding(
+    lat: float | None = None,
+    lon: float | None = None,
+    source: str = "wyoming",
+) -> dict[str, Any]:
+    """Return sounding for (lat, lon). source: wyoming | rap | hrrr. Same response shape."""
     if lat is not None and lon is not None:
+        source_lower = (source or "wyoming").lower()
+        if source_lower in ("rap", "hrrr"):
+            run_time = _run_time_utc()
+            cache_key = f"model_sounding:{source_lower}:{lat:.2f}:{lon:.2f}:{run_time}"
+            cached = model_sounding_cache.get(cache_key)
+            if cached is not None:
+                return cached
+            try:
+                result = get_model_sounding(lat, lon, source=source_lower)
+                if result:
+                    model_sounding_cache.set(cache_key, result)
+                    return result
+            except Exception:
+                pass
+            return get_sounding_demo()
+        # Wyoming (observed)
         try:
             result = get_real_sounding(lat, lon)
             if result:

@@ -61,10 +61,17 @@ export interface SoundingResponse {
   from_time?: string;
 }
 
-export async function fetchSounding(lat?: number | null, lon?: number | null): Promise<SoundingResponse> {
+export type SoundingSource = "wyoming" | "rap" | "hrrr";
+
+export async function fetchSounding(
+  lat?: number | null,
+  lon?: number | null,
+  options?: { source?: SoundingSource }
+): Promise<SoundingResponse> {
   const sp = new URLSearchParams();
   if (lat != null) sp.set("lat", String(lat));
   if (lon != null) sp.set("lon", String(lon));
+  if (options?.source) sp.set("source", options.source);
   const q = sp.toString();
   const r = await fetch(`${API_BASE}/physics/sounding${q ? `?${q}` : ""}`);
   if (!r.ok) throw new Error("Failed to fetch sounding");

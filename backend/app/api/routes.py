@@ -136,10 +136,14 @@ async def physics_advection_2d(
 
 
 @router.get("/physics/sounding")
-async def physics_sounding(lat: float | None = None, lon: float | None = None):
-    """Return sounding with CAPE, CIN, profile. If lat/lon provided, fetch real Wyoming sounding for nearest station."""
+async def physics_sounding(
+    lat: float | None = None,
+    lon: float | None = None,
+    source: str = "wyoming",
+):
+    """Return sounding with CAPE, CIN, profile. source: wyoming (observed) | rap | hrrr (model)."""
     try:
-        return get_sounding(lat, lon)
+        return get_sounding(lat, lon, source=source)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

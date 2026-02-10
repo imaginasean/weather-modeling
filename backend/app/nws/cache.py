@@ -1,4 +1,4 @@
-"""Simple in-memory cache with TTL for NWS API responses (respect rate limits)."""
+"""Simple in-memory cache with TTL for NWS API and sounding responses."""
 from __future__ import annotations
 
 import time
@@ -28,3 +28,7 @@ class TTLCache:
 
 # Module-level cache for NWS responses
 nws_cache: TTLCache = TTLCache()
+
+# Sounding caches (different TTLs)
+wyoming_sounding_cache: TTLCache = TTLCache(ttl_seconds=settings.cache_sounding_wyoming_ttl_seconds)
+model_sounding_cache: TTLCache = TTLCache(ttl_seconds=settings.cache_sounding_model_ttl_seconds)
