@@ -9,7 +9,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import InfoTooltip from "./InfoTooltip";
-import { fetchForecast, fetchForecastHourly, fetchLatestObservation, fetchAlerts, observationTempToF } from "../api/nws";
+import { fetchForecast, fetchForecastHourly, fetchLatestObservation, fetchAlertsByZone, observationTempToF } from "../api/nws";
 import type { PointData } from "../App";
 import type { ForecastResponse, ForecastHourlyResponse, ObservationResponse, AlertsResponse } from "../api/nws";
 import { fetchGlossary } from "../api/glossary";
@@ -74,14 +74,18 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
   }, [selectedStationId]);
 
   useEffect(() => {
+    if (!pointData?.forecastZoneId) {
+      setAlerts([]);
+      return;
+    }
     let cancelled = false;
-    fetchAlerts("US").then((a) => {
+    fetchAlertsByZone(pointData.forecastZoneId).then((a) => {
       if (!cancelled && a.features) setAlerts(a.features);
     }).catch(() => {
       if (!cancelled) setAlerts([]);
     });
     return () => { cancelled = true; };
-  }, []);
+  }, [pointData?.forecastZoneId]);
 
   const def = (term: string) => glossary[term.toLowerCase()];
   const periods = forecast?.properties?.periods ?? [];
@@ -205,8 +209,10 @@ export default function Dashboard({ pointData, selectedStationId }: DashboardPro
         />
       </h2>
       <div className="alerts-list">
-        {alerts.length === 0 ? (
-          <p className="alerts-none">No active alerts for US.</p>
+        {!pointData ? (
+          <p className="alerts-none">Select a location on the map to see alerts for that area.</p>
+        ) : alerts.length === 0 ? (
+          <p className="alerts-none">No active alerts for this location.</p>
         ) : (
           alerts.slice(0, 5).map((a, i) => (
             <div key={`${a.properties?.onset}-${i}`} className="alert-card">

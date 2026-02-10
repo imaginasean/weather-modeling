@@ -4,7 +4,24 @@ import L from "leaflet";
 import { fetchPoints } from "../api/nws";
 import { fetchStations } from "../api/nws";
 import type { PointData } from "../App";
-import type { StationsResponse } from "../api/nws";
+import type { PointsResponse, StationsResponse } from "../api/nws";
+
+function pointsToPointData(data: PointsResponse): PointData {
+  const props = data.properties;
+  const forecastZoneUrl = props.forecastZone;
+  const forecastZoneId = forecastZoneUrl
+    ? forecastZoneUrl.split("/").filter(Boolean).pop()
+    : undefined;
+  return {
+    gridId: props.gridId,
+    gridX: props.gridX,
+    gridY: props.gridY,
+    forecastUrl: props.forecast,
+    forecastHourlyUrl: props.forecastHourly,
+    observationStationsUrl: props.observationStations,
+    forecastZoneId: forecastZoneId ?? undefined,
+  };
+}
 
 /** Fix tile loading when map is in flex/grid: recalc size on mount and when container resizes. */
 function MapSizeFix() {
@@ -67,15 +84,7 @@ function MapClickHandler({
       setSelectedStationId(null);
       try {
         const data = await fetchPoints(lat, lng);
-        const props = data.properties;
-        setPointData({
-          gridId: props.gridId,
-          gridX: props.gridX,
-          gridY: props.gridY,
-          forecastUrl: props.forecast,
-          forecastHourlyUrl: props.forecastHourly,
-          observationStationsUrl: props.observationStations,
-        });
+        setPointData(pointsToPointData(data));
       } catch {
         setPointData(null);
       }
@@ -137,7 +146,12 @@ export default function MapView({
             position={[lat, lon]}
             icon={icon}
             eventHandlers={{
-              click: () => setSelectedStationId(id),
+              click: () => {
+                setSelectedStationId(id);
+                fetchPoints(lat, lon)
+                  .then((data) => setPointData(pointsToPointData(data)))
+                  .catch(() => setPointData(null));
+              },
             }}
           >
             <Popup>

@@ -11,6 +11,8 @@ export type PointData = {
   forecastUrl: string;
   forecastHourlyUrl: string;
   observationStationsUrl: string;
+  /** NWS forecast zone ID (e.g. FLZ048) for alerts */
+  forecastZoneId?: string;
 } | null;
 
 function App() {

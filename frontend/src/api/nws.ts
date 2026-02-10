@@ -40,9 +40,19 @@ export async function fetchLatestObservation(stationId: string): Promise<Observa
   return r.json();
 }
 
-export async function fetchAlerts(area: string): Promise<AlertsResponse> {
+/** Fetch active alerts for a state (e.g. "FL", "IL"). */
+export async function fetchAlertsByArea(area: string): Promise<AlertsResponse> {
   const r = await fetch(
     `${API_BASE}/alerts/active?area=${encodeURIComponent(area)}`
+  );
+  if (!r.ok) throw new Error("Failed to fetch alerts");
+  return r.json();
+}
+
+/** Fetch active alerts for a forecast zone (e.g. "FLZ048"). Use this for the selected map location. */
+export async function fetchAlertsByZone(zoneId: string): Promise<AlertsResponse> {
+  const r = await fetch(
+    `${API_BASE}/alerts/active?zone=${encodeURIComponent(zoneId)}`
   );
   if (!r.ok) throw new Error("Failed to fetch alerts");
   return r.json();
@@ -57,6 +67,10 @@ export interface PointsResponse {
     forecast: string;
     forecastHourly: string;
     observationStations: string;
+    /** URL e.g. https://api.weather.gov/zones/forecast/FLZ048 */
+    forecastZone?: string;
+    /** URL e.g. https://api.weather.gov/zones/county/FLC015 */
+    county?: string;
   };
 }
 
