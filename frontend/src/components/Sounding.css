@@ -66,8 +66,74 @@
   align-items: center;
 }
 
+.sounding-units {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.sounding-units-label {
+  color: #555;
+}
+
+.sounding-unit-toggles {
+  display: inline-flex;
+  gap: 0.15rem;
+}
+
+.sounding-unit-btn {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #fff;
+  color: #495057;
+  cursor: pointer;
+}
+
+.sounding-unit-btn:hover {
+  background: #f1f3f5;
+}
+
+.sounding-unit-btn.active {
+  background: #0f3460;
+  border-color: #0f3460;
+  color: #fff;
+}
+
 .sounding-chart {
   margin-top: 0.25rem;
+}
+
+.sounding-insights {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e2e6ea;
+}
+
+.sounding-insights-title {
+  font-size: 0.9rem;
+  margin: 0 0 0.35rem 0;
+  color: #333;
+}
+
+.sounding-insights-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.85rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.sounding-insights-list li {
+  margin-bottom: 0.25rem;
+}
+
+.sounding-insights-muted {
+  color: #777;
 }
 
 .sounding-chart-tooltip {
